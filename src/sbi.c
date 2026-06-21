@@ -21,7 +21,13 @@ struct sbiret sbicall(long arg0, long arg1, long arg2, long arg3, long arg4,
 	return (struct sbiret){ .error = a0, .value = a1 };
 }
 
-void putchar(char c)
+void putc(char c)
 {
 	sbicall(c, 0, 0, 0, 0, 0, 0, 1);
+}
+
+void puts(const char *s)
+{
+	for (int i = 0; s[i]; i++)
+		putc(s[i]);
 }

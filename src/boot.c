@@ -1,24 +1,16 @@
 #include "std.h"
-#include "type.h"
+#include "sbi.h"
 
 extern char __bss[], __bss_end[], __stack_top[];
 
-void *memset(void *buf, char c, size_t n)
-{
-	uint8 *p = (uint8 *)buf;
-	while (n--)
-		*p++ = c;
-	return buf;
-}
+void kernel_trap(void);
 
 void kernel_main(void)
 {
-	const char *s = "\n\nHello World!\n";
-	for (int i = 0; s[i] != '\0'; i++)
-		putchar(s[i]);
+	memset(__bss, 0, (size_t)(__bss_end - __bss));
 
-	for (;;)
-		;
+	write_csr(stvec, (ulong)kernel_trap);
+	__asm__ __volatile__("unimp");
 }
 
 __attribute__((section(".text.boot"))) __attribute__((naked)) void boot(void)
